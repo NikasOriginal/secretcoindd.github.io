@@ -93,7 +93,7 @@
         document.getElementById('coin-count').innerText = coinCount.toFixed(3); // Отображаем с тремя десятичными знаками
 
         function addCoin() {
-            coinCount += 1;
+            coinCount += 25;
             document.getElementById('coin-count').innerText = coinCount.toFixed(3);
             localStorage.setItem('coinCount', coinCount);
             animateButton();
