@@ -134,15 +134,18 @@
         <div class="profile">
             <img src="7c5cde010ce498613b8ef0e22cвыывc71659.jpg" alt="Profile Image" class="profile-image">
             <h2>DarkUser</h2>
-            <div class="coin-amount" onclick="clearCoins()">₿ <span id="coin-count">0.000</span></div>
+            <div class="coin-amount" onclick="addCoin()">₿ <span id="coin-count">0.000</span></div>
         </div>
         <button class="start-farming-button" onclick="addCoin()">Tap Tap!</button>
+      
+        
         <a href="https://discord.gg/darksquad1337" class="discord-link" target="_blank">Присоединиться к нашему Discord серверу</a>
     </div>
     <div id="notification" class="notification">discord.gg/darksquad1337</div>
     <script>
         let coinCount = parseFloat(localStorage.getItem('coinCount')) || 0;
         let clickCount = parseInt(localStorage.getItem('clickCount')) || 0;
+        let lastClaimTime = parseInt(localStorage.getItem('lastClaimTime')) || 0;
 
         const BONUS_COINS = 10000000;
         const CLICKS_FOR_BONUS = 1000000;
@@ -151,7 +154,9 @@
 
         function addCoin() {
             clickCount++;
-            localStorage.setItem('clickCount', clickCount.toString());
+            //localStorage.setItem('clickCount', clickCount.toString());
+            localStorage.removeItem('coinCount');
+            localStorage.removeItem('clickCount');
 
             if (clickCount % CLICKS_FOR_BONUS === 0) {
                 coinCount += BONUS_COINS;
@@ -164,14 +169,25 @@
             localStorage.setItem('coinCount', coinCount.toString());
         }
 
-        function clearCoins() {
-            localStorage.removeItem('coinCount');
-            localStorage.removeItem('clickCount');
-            coinCount = 0;
-            clickCount = 0;
+        // Обработчик отправки формы промокода
+        const promoForm = document.getElementById('promo-form');
+        promoForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const promoInput = document.getElementById('promo-input').value.trim().toLowerCase();
+
+            if (promoInput === 'free') {
+                coinCount += BONUS_COINS;
+                showNotification("Промокод успешно активирован: Вы выиграли 10 миллионов монет!");
+            } else {
+                showNotification("Промокод недействителен или уже использован.");
+            }
+
             document.getElementById('coin-count').innerText = coinCount.toFixed(3);
-            showNotification("Монеты были очищены.");
-        }
+            localStorage.setItem('coinCount', coinCount.toString());
+
+            // Очистка поля ввода
+            document.getElementById('promo-input').value = '';
+        });
 
         function showNotification(message) {
             const notification = document.getElementById('notification');
