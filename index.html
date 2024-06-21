@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blum</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            padding: 0 20px;
+        }
+        .profile-image {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+        }
+        .coin-amount {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        .coin-name::after {
+            content: ' darkcoin';
+            font-size: 24px;
+            color: white;
+        }
+        .start-farming-button {
+            display: block;
+            background-color: #444;
+            border: none;
+            padding: 15px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            font-size: 18px;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile">
+            <img src="path-to-profile-image.jpg" alt="Profile Image" class="profile-image">
+            <h2>nikas228111</h2>
+            <div class="coin-amount">฿ <span id="coin-count">0.000</span> <span class="coin-name"></span></div>
+        </div>
+        <button class="start-farming-button" onclick="addCoin()">click</button>
+    </div>
+    <script>
+        let coinCount = parseFloat(localStorage.getItem('coinCount')) || 0.000;
+
+        document.getElementById('coin-count').innerText = coinCount.toFixed(3);
+
+        function addCoin() {
+            coinCount += 1;
+            document.getElementById('coin-count').innerText = coinCount.toFixed(3);
+            localStorage.setItem('coinCount', coinCount);
+        }
+    </script>
+</body>
+</html>
