@@ -56,23 +56,13 @@
             margin: 20px auto; /* Немного ниже для удобства на телефонах */
             position: relative;
             overflow: hidden;
+            transition: transform 0.2s; /* Добавлено для плавной анимации */
         }
-        .start-farming-button::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            transform: scale(0);
-            transition: transform 0.5s ease-out;
-            pointer-events: none;
-            z-index: -1;
+        .start-farming-button:hover {
+            transform: scale(1.1); /* Увеличение кнопки при наведении */
         }
-        .start-farming-button:hover::after {
-            transform: scale(3);
+        .start-farming-button:active {
+            transform: scale(0.9); /* Уменьшение кнопки при активации (нажатии) */
         }
         .discord-link {
             font-size: 14px;
@@ -104,23 +94,6 @@
                 opacity: 0.5;
             }
         }
-        .particle {
-            position: absolute;
-            background-color: rgba(255, 255, 255, 0.7);
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            pointer-events: none;
-            animation: particleAnimation 2s linear;
-        }
-        @keyframes particleAnimation {
-            0% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-            100% {
-                transform: translate(calc(-50vw + 100%), calc(-50vh + 100%)) rotate(1080deg);
-            }
-        }
         /* Стили для input и кнопки claim */
         .promo-input {
             width: calc(100% - 120px); /* Ширина равна ширине кнопки Claim */
@@ -132,6 +105,13 @@
             box-sizing: border-box;
             color: black;
             font-family: Arial, sans-serif;
+            background-color: rgba(255, 255, 255, 0.1); /* Прозрачный фон */
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+        .promo-input:focus {
+            outline: none;
+            border-color: #aaa; /* Цвет рамки при фокусе */
+            background-color: white; /* Фон при фокусе */
         }
         .claim-button {
             width: 100px;
@@ -157,11 +137,7 @@
             <div class="coin-amount" onclick="addCoin()">₿ <span id="coin-count">0.000</span></div>
         </div>
         <button class="start-farming-button" onclick="addCoin()">Tap Tap!</button>
-        <!-- Форма для промокода -->
-        <form id="promo-form">
-            <input type="text" id="promo-input" class="promo-input" placeholder="Введите промокод">
-            <button type="submit" class="claim-button">Claim</button>
-        </form>
+      
         
         <a href="https://discord.gg/darksquad1337" class="discord-link" target="_blank">Присоединиться к нашему Discord серверу</a>
     </div>
@@ -171,7 +147,7 @@
         let clickCount = parseInt(localStorage.getItem('clickCount')) || 0;
         let lastClaimTime = parseInt(localStorage.getItem('lastClaimTime')) || 0;
 
-        const BONUS_COINS = 100000;
+        const BONUS_COINS = 10000000;
         const CLICKS_FOR_BONUS = 1000000;
 
         document.getElementById('coin-count').innerText = coinCount.toFixed(3);
@@ -189,29 +165,6 @@
 
             document.getElementById('coin-count').innerText = coinCount.toFixed(3);
             localStorage.setItem('coinCount', coinCount.toString());
-            animateParticles();
-        }
-
-        function animateParticles() {
-            const container = document.querySelector('.container');
-            const rect = container.getBoundingClientRect();
-
-            for (let i = 0; i < 5; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-
-                const x = Math.random() * rect.width;
-                const y = Math.random() * rect.height;
-
-                particle.style.left = x + 'px';
-                particle.style.top = y + 'px';
-
-                container.appendChild(particle);
-
-                setTimeout(() => {
-                    particle.remove();
-                }, 2000);
-            }
         }
 
         // Обработчик отправки формы промокода
