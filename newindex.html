@@ -1,1 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blum</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            padding: 0 20px;
+        }
+        .profile-image {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            margin-top: 20px;
+        }
+        h2 {
+            margin: 10px 0;
+            font-size: 24px;
+        }
+        .coin-amount {
+            font-size: 36px;
+            margin: 10px 0;
+            cursor: pointer; /* Добавлено для указания на возможность клика */
+        }
+        .coin-name::after {
+            content: ' darkcoin';
+            font-size: 24px;
+            color: white;
+        }
+        .start-farming-button {
+            display: block;
+            background-color: white;
+            border: none;
+            padding: 15px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            color: black;
+            font-size: 18px;
+            width: 100%;
+            max-width: 400px;
+            margin: 40px auto 20px; /* Немного ниже для удобства на телефонах */
+            position: relative;
+            overflow: hidden;
+        }
+        .start-farming-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s ease-out;
+            pointer-events: none;
+        }
+        .start-farming-button:hover::after {
+            transform: translate(-50%, -50%) scale(1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile">
+            <img src="7c5cde010ce498613b8ef0e22cвыывc71659.jpg" alt="Profile Image" class="profile-image">
+            <h2>DarkUser</h2>
+            <div class="coin-amount" onclick="getDailyReward()">₿ <span id="coin-count">0.000</span> <span class=></span></div>
+        </div>
+        <button class="start-farming-button" onclick="addCoin()">Tap Tap!</button>
+    </div>
+    <script>
+        let coinCount = parseInt(localStorage.getItem('coinCount')) || 0; // Используем parseInt для целых чисел
+        let lastClaimTime = parseInt(localStorage.getItem('lastClaimTime')) || 0; // Также парсим lastClaimTime
 
+        const DAY_IN_MS = 1000 * 60 * 60 * 24; // Константа для дня в миллисекундах
+        const COINS_PER_REWARD = 1000000; // Количество монет в каждой награде
+
+        document.getElementById('coin-count').innerText = coinCount.toFixed(3); // Отображаем с тремя десятичными знаками
+
+        function addCoin() {
+            coinCount += 25;
+            document.getElementById('coin-count').innerText = coinCount.toFixed(3);
+            localStorage.setItem('coinCount', coinCount);
+            animateButton();
+        }
+
+        function getDailyReward() {
+            let currentTime = new Date().getTime();
+            if (!lastClaimTime || (currentTime - lastClaimTime >= 2 * DAY_IN_MS)) {
+                coinCount += COINS_PER_REWARD;
+                document.getElementById('coin-count').innerText = coinCount.toFixed(3);
+                localStorage.setItem('coinCount', coinCount);
+                localStorage.setItem('lastClaimTime', currentTime);
+                animateButton();
+                
+            } else {
+                let timeToClaim = new Date(lastClaimTime + 2 * DAY_IN_MS);
+                
+            }
+        }
+
+        function animateButton() {
+            const button = document.querySelector('.start-farming-button');
+            button.classList.add('animate');
+            setTimeout(() => {
+                button.classList.remove('animate');
+            }, 500); // Устанавливаем таймаут в 0.5 секунды для анимации
+        }
+    </script>
+</body>
+</html>
