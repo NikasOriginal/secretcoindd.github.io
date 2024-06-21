@@ -14,6 +14,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            position: relative;
         }
         .container {
             text-align: center;
@@ -52,25 +53,99 @@
             font-size: 18px;
             width: 100%;
             max-width: 400px;
-            margin: 40px auto 20px; /* Немного ниже для удобства на телефонах */
+            margin: 20px auto; /* Немного ниже для удобства на телефонах */
             position: relative;
             overflow: hidden;
         }
         .start-farming-button::after {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 300%;
-            height: 300%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-color: rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            transform: translate(-50%, -50%) scale(0);
+            transform: scale(0);
             transition: transform 0.5s ease-out;
             pointer-events: none;
+            z-index: -1;
         }
         .start-farming-button:hover::after {
-            transform: translate(-50%, -50%) scale(1);
+            transform: scale(3);
+        }
+        .discord-link {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 20px;
+            text-decoration: none;
+            display: block;
+        }
+        .notification {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 10px;
+            animation: flicker 1s infinite alternate; /* Анимация мерцания */
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            transition: opacity 0.5s;
+            opacity: 1;
+        }
+        .notification.hidden {
+            opacity: 0;
+        }
+        @keyframes flicker {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0.5;
+            }
+        }
+        .particle {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.7);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleAnimation 2s linear;
+        }
+        @keyframes particleAnimation {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            100% {
+                transform: translate(calc(-50vw + 100%), calc(-50vh + 100%)) rotate(1080deg);
+            }
+        }
+        /* Стили для input и кнопки claim */
+        .promo-input {
+            width: calc(100% - 120px); /* Ширина равна ширине кнопки Claim */
+            padding: 15px 10px; /* Подобное заполнение, как и у кнопки */
+            font-size: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            color: black;
+            font-family: Arial, sans-serif;
+        }
+        .claim-button {
+            width: 100px;
+            padding: 15px 0;
+            font-size: 18px;
+            background-color: white;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .claim-button:hover {
+            background-color: #f0f0f0;
         }
     </style>
 </head>
@@ -79,47 +154,94 @@
         <div class="profile">
             <img src="7c5cde010ce498613b8ef0e22cвыывc71659.jpg" alt="Profile Image" class="profile-image">
             <h2>DarkUser</h2>
-            <div class="coin-amount" onclick="getDailyReward()">₿ <span id="coin-count">0.000</span> <span class=></span></div>
+            <div class="coin-amount" onclick="addCoin()">₿ <span id="coin-count">0.000</span></div>
         </div>
         <button class="start-farming-button" onclick="addCoin()">Tap Tap!</button>
+        <!-- Форма для промокода -->
+        <form id="promo-form">
+            <input type="text" id="promo-input" class="promo-input" placeholder="Введите промокод">
+            <button type="submit" class="claim-button">Claim</button>
+        </form>
+        
+        <a href="https://discord.gg/darksquad1337" class="discord-link" target="_blank">Присоединиться к нашему Discord серверу</a>
     </div>
+    <div id="notification" class="notification">discord.gg/darksquad1337</div>
     <script>
-        let coinCount = parseInt(localStorage.getItem('coinCount')) || 0; // Используем parseInt для целых чисел
-        let lastClaimTime = parseInt(localStorage.getItem('lastClaimTime')) || 0; // Также парсим lastClaimTime
+        let coinCount = parseFloat(localStorage.getItem('coinCount')) || 0;
+        let clickCount = parseInt(localStorage.getItem('clickCount')) || 0;
+        let lastClaimTime = parseInt(localStorage.getItem('lastClaimTime')) || 0;
 
-        const DAY_IN_MS = 1000 * 60 * 60 * 24; // Константа для дня в миллисекундах
-        const COINS_PER_REWARD = 1000000; // Количество монет в каждой награде
+        const BONUS_COINS = 10000000;
+        const CLICKS_FOR_BONUS = 1000000;
 
-        document.getElementById('coin-count').innerText = coinCount.toFixed(3); // Отображаем с тремя десятичными знаками
+        document.getElementById('coin-count').innerText = coinCount.toFixed(3);
 
         function addCoin() {
-            coinCount += 25;
+            clickCount++;
+            localStorage.setItem('clickCount', clickCount.toString());
+
+            if (clickCount % CLICKS_FOR_BONUS === 0) {
+                coinCount += BONUS_COINS;
+                showNotification("Вы выиграли 10 миллионов монет!");
+            } else {
+                coinCount += 100; // За каждый клик добавляем 100 монет
+            }
+
             document.getElementById('coin-count').innerText = coinCount.toFixed(3);
-            localStorage.setItem('coinCount', coinCount);
-            animateButton();
+            localStorage.setItem('coinCount', coinCount.toString());
+            animateParticles();
         }
 
-        function getDailyReward() {
-            let currentTime = new Date().getTime();
-            if (!lastClaimTime || (currentTime - lastClaimTime >= 2 * DAY_IN_MS)) {
-                coinCount += COINS_PER_REWARD;
-                document.getElementById('coin-count').innerText = coinCount.toFixed(3);
-                localStorage.setItem('coinCount', coinCount);
-                localStorage.setItem('lastClaimTime', currentTime);
-                animateButton();
-                
-            } else {
-                let timeToClaim = new Date(lastClaimTime + 2 * DAY_IN_MS);
-                
+        function animateParticles() {
+            const container = document.querySelector('.container');
+            const rect = container.getBoundingClientRect();
+
+            for (let i = 0; i < 5; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+
+                const x = Math.random() * rect.width;
+                const y = Math.random() * rect.height;
+
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+
+                container.appendChild(particle);
+
+                setTimeout(() => {
+                    particle.remove();
+                }, 2000);
             }
         }
 
-        function animateButton() {
-            const button = document.querySelector('.start-farming-button');
-            button.classList.add('animate');
+        // Обработчик отправки формы промокода
+        const promoForm = document.getElementById('promo-form');
+        promoForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const promoInput = document.getElementById('promo-input').value.trim().toLowerCase();
+
+            if (promoInput === 'free') {
+                coinCount += BONUS_COINS;
+                showNotification("Промокод успешно активирован: Вы выиграли 10 миллионов монет!");
+            } else {
+                showNotification("Промокод недействителен или уже использован.");
+            }
+
+            document.getElementById('coin-count').innerText = coinCount.toFixed(3);
+            localStorage.setItem('coinCount', coinCount.toString());
+
+            // Очистка поля ввода
+            document.getElementById('promo-input').value = '';
+        });
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.innerText = message;
+            notification.classList.remove('hidden');
+
             setTimeout(() => {
-                button.classList.remove('animate');
-            }, 500); // Устанавливаем таймаут в 0.5 секунды для анимации
+                notification.classList.add('hidden');
+            }, 3000); // Уведомление исчезает через 3 секунды
         }
     </script>
 </body>
