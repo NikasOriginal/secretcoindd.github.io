@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +8,7 @@
         body {
             background-color: black;
             color: white;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -25,9 +25,14 @@
             border-radius: 50%;
             width: 100px;
             height: 100px;
+            margin-top: 20px;
+        }
+        h2 {
+            margin: 10px 0;
+            font-size: 24px;
         }
         .coin-amount {
-            font-size: 24px;
+            font-size: 36px;
             margin: 10px 0;
         }
         .coin-name::after {
@@ -37,27 +42,27 @@
         }
         .start-farming-button {
             display: block;
-            background-color: #444;
+            background-color: white;
             border: none;
             padding: 15px 0;
             border-radius: 5px;
             cursor: pointer;
-            color: white;
+            color: black;
             font-size: 18px;
             width: 100%;
             max-width: 400px;
-            margin: 20px auto 0;
+            margin: 20px auto 0; /* Вернул кнопку на место согласно вашему запросу */
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="profile">
-            <img src="path-to-profile-image.jpg" alt="Profile Image" class="profile-image">
-            <h2>nikas228111</h2>
-            <div class="coin-amount">฿ <span id="coin-count">0.000</span> <span class="coin-name"></span></div>
+            <img src="7c5cde010ce498613b8ef0e22cвыывc71659.jpg" alt="Profile Image" class="profile-image">
+            <h2>DarkUser</h2>
+            <div class="coin-amount">D <span id="coin-count">0.000</span> <span class="coin-name"></span></div>
         </div>
-        <button class="start-farming-button" onclick="addCoin()">click</button>
+        <button class="start-farming-button" onclick="addCoin()">Click</button>
     </div>
     <script>
         let coinCount = parseFloat(localStorage.getItem('coinCount')) || 0.000;
