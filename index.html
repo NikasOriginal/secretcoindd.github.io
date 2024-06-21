@@ -107,10 +107,10 @@
                 localStorage.setItem('coinCount', coinCount);
                 localStorage.setItem('lastClaimTime', currentTime);
                 animateButton();
-                alert(`You claimed your daily reward of ${COINS_PER_REWARD} coins!`);
+                
             } else {
                 let timeToClaim = new Date(lastClaimTime + 2 * DAY_IN_MS);
-                alert(`You can claim your daily reward again on ${timeToClaim.toLocaleDateString()} at ${timeToClaim.toLocaleTimeString()}`);
+                
             }
         }
 
