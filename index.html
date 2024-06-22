@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blum</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap');
+
         body {
             background-color: black;
             color: white;
@@ -15,12 +17,14 @@
             height: 100vh;
             margin: 0;
             position: relative;
+            overflow: hidden; /* To ensure particles don't cause scroll bars */
         }
         .container {
             text-align: center;
             width: 100%;
             max-width: 400px;
             padding: 0 20px;
+            z-index: 1; /* Ensure container is above the particles */
         }
         .profile-image {
             border-radius: 50%;
@@ -33,10 +37,12 @@
             font-size: 24px;
         }
         .coin-amount {
+            font-family: 'Roboto Mono', monospace;
             font-size: 36px;
             margin: 10px 0;
-            cursor: pointer; /* Добавлено для указания на возможность клика */
-            position: relative; /* Added to contain floating messages */
+            cursor: pointer;
+            position: relative;
+            color: #B0B0B0;
         }
         .coin-name::after {
             content: ' darkcoin';
@@ -54,16 +60,16 @@
             font-size: 18px;
             width: 100%;
             max-width: 400px;
-            margin: 20px auto; /* Немного ниже для удобства на телефонах */
+            margin: 20px auto;
             position: relative;
             overflow: hidden;
-            transition: transform 0.2s; /* Добавлено для плавной анимации */
+            transition: transform 0.2s;
         }
         .start-farming-button:hover {
-            transform: scale(1.1); /* Увеличение кнопки при наведении */
+            transform: scale(1.1);
         }
         .start-farming-button:active {
-            transform: scale(0.9); /* Уменьшение кнопки при активации (нажатии) */
+            transform: scale(0.9);
         }
         .discord-link {
             font-size: 14px;
@@ -76,7 +82,7 @@
             font-size: 12px;
             color: rgba(255, 255, 255, 0.5);
             margin-top: 10px;
-            animation: flicker 1s infinite alternate; /* Анимация мерцания */
+            animation: flicker 1s infinite alternate;
             position: absolute;
             bottom: 10px;
             width: 100%;
@@ -95,10 +101,9 @@
                 opacity: 0.5;
             }
         }
-        /* Стили для input и кнопки claim */
         .promo-input {
-            width: calc(100% - 120px); /* Ширина равна ширине кнопки Claim */
-            padding: 15px 10px; /* Подобное заполнение, как и у кнопки */
+            width: calc(100% - 120px);
+            padding: 15px 10px;
             font-size: 16px;
             margin-bottom: 10px;
             border: 1px solid #ccc;
@@ -106,13 +111,13 @@
             box-sizing: border-box;
             color: black;
             font-family: Arial, sans-serif;
-            background-color: rgba(255, 255, 255, 0.1); /* Прозрачный фон */
+            background-color: rgba(255, 255, 255, 0.1);
             transition: border-color 0.3s, background-color 0.3s;
         }
         .promo-input:focus {
             outline: none;
-            border-color: #aaa; /* Цвет рамки при фокусе */
-            background-color: white; /* Фон при фокусе */
+            border-color: #aaa;
+            background-color: white;
         }
         .claim-button {
             width: 100px;
@@ -128,20 +133,19 @@
         .claim-button:hover {
             background-color: #f0f0f0;
         }
-        /* Стили для плавающих сообщений */
         .floating-messages {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* Сообщения не мешают кликам */
+            pointer-events: none;
         }
         .floating-message {
             position: absolute;
             font-size: 24px;
             color: white;
-            animation: float 1s ease-out, fadeOut 1s 1s forwards; /* Плавающее и исчезающее анимации */
+            animation: float 1s ease-out, fadeOut 1s 1s forwards;
         }
         @keyframes float {
             0% {
@@ -159,9 +163,28 @@
                 opacity: 0;
             }
         }
+        /* Particles */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            width: 5px;
+            height: 5px;
+            animation: float 10s infinite linear, fadeOut 10s infinite linear;
+        }
     </style>
 </head>
 <body>
+    <div class="particles" id="particles"></div>
     <div class="container">
         <div class="profile">
             <img src="7c5cde010ce498613b8ef0e22cвыывc71659.jpg" alt="Profile Image" class="profile-image">
@@ -190,15 +213,13 @@
                 coinCount += BONUS_COINS;
                 showNotification("Вы выиграли 10 миллионов монет!");
             } else {
-                coinCount += 100; // За каждый клик добавляем 100 монет
-                showFloatingMessage("+100");
+                coinCount += 10;
+                showFloatingMessage("+10");
             }
 
             document.getElementById('coin-count').innerText = coinCount.toFixed(3);
             localStorage.setItem('coinCount', coinCount.toString());
         }
-
-       
 
         function showNotification(message) {
             const notification = document.getElementById('notification');
@@ -207,7 +228,7 @@
 
             setTimeout(() => {
                 notification.classList.add('hidden');
-            }, 3000); // Уведомление исчезает через 3 секунды
+            }, 3000);
         }
 
         function showFloatingMessage(message) {
@@ -216,7 +237,6 @@
             messageElement.classList.add('floating-message');
             messageElement.innerText = message;
 
-            // Random position near the coin amount
             const coinAmountElement = document.querySelector('.coin-amount');
             const coinRect = coinAmountElement.getBoundingClientRect();
             const containerRect = floatingMessagesContainer.getBoundingClientRect();
@@ -233,9 +253,34 @@
                 messageElement.classList.add('fade-out');
                 setTimeout(() => {
                     floatingMessagesContainer.removeChild(messageElement);
-                }, 1000); // Remove the message after the fade-out animation
-            }, 1000); // Message stays visible for 1 second before fading out
+                }, 1000);
+            }, 1000);
         }
+
+        // Particle effect
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+
+            const size = Math.random() * 4 + 1;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+
+            const animationDuration = Math.random() * 10 + 5;
+            particle.style.animationDuration = `${animationDuration}s`;
+
+            document.getElementById('particles').appendChild(particle);
+
+            setTimeout(() => {
+                particle.remove();
+            }, animationDuration * 1000);
+        }
+
+        setInterval(createParticle, 500);
+
     </script>
 </body>
 </html>
